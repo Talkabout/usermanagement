@@ -197,3 +197,5 @@ $messages['additional'] = "Weitere...";
 $messages['otherhomephone'] = "Weitere Telefonnummer (Zuhause)";
 $messages['othermobile'] = "Weitere Telefonnummer (Handy)";
 $messages['tabaddress'] = "Adresse";
+$messages['tabkeys'] = "Schlüssel";
+$messages['sshpublickey'] = "SSH Schlüssel";

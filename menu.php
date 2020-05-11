@@ -38,14 +38,6 @@
                   ><i class="fa fa-fw fa-mobile"></i> <?php echo $messages["menusms"]; ?></a>
                 </li>
                 <?php } ?>
-                <?php if ( $change_sshkey ) { ?>
-                <li class="<?php if ( $action === "changesshkey" ) { echo "active"; } ?>">
-                  <a href="?action=changesshkey"
-                     data-toggle="menu-popover"
-                     data-content="<?php echo htmlentities(strip_tags($messages["changehelpsshkey"])); ?>"
-                  ><i class="fa fa-fw fa-terminal"></i> <?php echo $messages["menusshkey"]; ?></a>
-                </li>
-                <?php } ?>
                 <?php if ( $_SESSION['administrator']) { ?>
 		<li class="<?php if ( $action === "create" ) { echo "active"; } ?>">
                   <a href="?action=create"

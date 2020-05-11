@@ -195,3 +195,5 @@ $messages['additional'] = "Additional...";
 $messages['otherhomephone'] = "Additional Telephone Number (Home)";
 $messages['othermobile'] = "Additional Telephone Number (Mobile)";
 $messages['tabaddress'] = "Address";
+$messages['tabkeys'] = "Keys";
+$messages['sshpublickey'] = "SSH Key";

@@ -61,11 +61,13 @@ $attributeMapping = array(
     ),
     'memberof' => array(
         'icon' => 'key',
-        'tab' => $messages['tabgroups']
+        'tab' => $messages['tabgroups'],
+        'admin' => true
     ),
     'objectclass' => array(
         'icon' => 'tag',
-        'tab' => $messages['tabobjectclasses']
+        'tab' => $messages['tabobjectclasses'],
+        'admin' => true
     ),
     'mail' => array(
         'icon' => 'envelope',
@@ -388,11 +390,6 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                 $availableAttributes[] = 'objectclass';
 
                 $attributeMapping = array_intersect_key($attributeMapping, array_flip(array_map('strtolower', $availableAttributes)));
-
-                if (!$administrator) {
-                    unset($attributeMapping['memberof']);
-                    unset($attributeMapping['objectclass']);
-                }
             }
         }
     }
@@ -467,7 +464,12 @@ if ($pwd_show_policy_pos === 'above') {
     </div>
   </div>
 <?php } ?>
-<?php foreach (array_keys($attributeMapping) as $name) { ?>
+<?php
+    foreach ($attributeMapping as $name => $details) {
+        if (isset($details['admin']) && $details['admin'] && !$administrator) {
+            continue;
+        }
+?>
 <?php ob_start(); ?>
 <?php $values = ($_POST['data_' . $name] ?? ($data[0][$name] ?? array(''))); ?>
 <div id="container_<?php echo $name; ?>" class="group-container <?php echo (!count(array_filter($values)) && isset($attributeMapping[$name]['dependency']) ? 'hidden' : ''); ?>">
