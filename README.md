@@ -2,9 +2,11 @@
 
 ## Presentation
 
-Usermangement is a PHP application based on "Self Service Password" that allows users manage their data in an LDAP directory.
+Usermangement is a PHP application based on "Self Service Password" that allows users to manage their data in an LDAP directory.
 
 The application can be used on standard LDAPv3 directories (OpenLDAP, OpenDS, ApacheDS, Sun Oracle DSEE, Novell, etc.) and also on Active Directory.
+
+## Screenshots
 
 ![1 - login](https://user-images.githubusercontent.com/10157917/81551946-f0034880-9382-11ea-9865-00d217ea7bab.jpg)
 ![2 - reset](https://user-images.githubusercontent.com/10157917/81551952-f2fe3900-9382-11ea-8788-ec3259c513e4.jpg)
@@ -18,6 +20,7 @@ The application can be used on standard LDAPv3 directories (OpenLDAP, OpenDS, Ap
 ![10 - add user](https://user-images.githubusercontent.com/10157917/81552018-090bf980-9383-11ea-8516-bea4a1796680.jpg)
 ![11 - delete user](https://user-images.githubusercontent.com/10157917/81552028-0d381700-9383-11ea-806f-de85ef9de5e5.jpg)
 
+## Features
 
 It has the following features:
 * Samba mode to change Samba passwords
@@ -46,6 +49,7 @@ It has the following features:
   * delete users
 
 ## Prerequisite
+
 * PHP extensions required:
   * php-openssl (token crypt, probably built-in)
   * php-mbstring (reset mail)
