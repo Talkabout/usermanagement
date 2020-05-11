@@ -42,6 +42,16 @@ $ldap_base = "dc=example,dc=com";
 $ldap_login_attribute = "uid";
 $ldap_fullname_attribute = "cn";
 $ldap_filter = "(&(objectClass=person)($ldap_login_attribute={login}))";
+# defines the group dn of administration users that will see more options
+$ldap_administration_dn = "cn=Domain Admins,cn=Users,dc=home,dc=intern";
+#define additional attributes to be read from ldap and shown in the form
+# Format:
+#     'NAME_OF_THE_LDAP_ATTRIBUTE' => array(
+#         'icon' => 'NAME_OF_THE_FONTAWSOME_ICON_TO_USE',
+#         'tab' => 'NAME_OF_THE_TAB_WHERE_THE_ATTRIBUTE_SHOULD_BE_SHOWN'
+#     )
+$ldap_additional_attributes = array(
+);
 
 # Active Directory mode
 # true: use unicodePwd as password field
