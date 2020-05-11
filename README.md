@@ -37,6 +37,8 @@ It has the following features:
 * reCAPTCHA (Google API)
 * Mail notification after password change
 * Hook script after password change
+* editing of general user settings in ldap
+* administration mode (based on configurable user group) to change other users settings and assign groups/object classes
 
 ## Prerequisite
 * PHP extensions required:
