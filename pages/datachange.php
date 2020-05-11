@@ -420,19 +420,6 @@ if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"
 
 <div class="result alert alert-<?php echo get_criticity($result) ?>">
 <p><i class="fa fa-fw <?php echo get_fa_class($result) ?>" aria-hidden="true"></i> <?php echo $messages[$result] . (!empty($additionalResult) ? ' (' . $additionalResult . ')' : ''); ?></p>
-<?php if (isset($data[0]['thumbnailphoto'])) { ?>
-<div
-   class="profile-image"
-   style="background-image:url('data:image/png;base64,<?php echo base64_encode($data[0]['thumbnailphoto'][0]); ?>');"
-   data-toggle="popover"
-   data-content="<div class='profile-image large' style=&quot;background-image:url('data:image/png;base64,<?php echo base64_encode($data[0]['thumbnailphoto'][0]); ?>');&quot;></div>"
-   data-html="true"
->
-</div>
-<?php } ?>
-
-
-
 </div>
 
 <?php if ( $display_posthook_error and $posthook_return > 0 ) { ?>

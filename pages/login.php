@@ -85,7 +85,7 @@ if ( $result === "" ) {
 
     # Search for user
     $ldap_filter = str_replace("{login}", $login, $ldap_filter);
-    $search = ldap_search($ldap, $ldap_base, $ldap_filter);
+    $search = ldap_search($ldap, $ldap_base, $ldap_filter, array('objectclass', 'memberof', 'dn', 'thumbnailphoto'));
     $entries = ldap_get_entries($ldap, $search);
 
     $errno = ldap_errno($ldap);
@@ -237,17 +237,18 @@ if ($pwd_show_policy_pos === 'below') {
 
 <?php } else {
 
-	$_SESSION['authenticated'] = true;
-	$_SESSION['login']         = $login;
-	$_SESSION['password']      = $password;
-	$_SESSION['objectclass']   = $entries[0]['objectclass'];
-	$_SESSION['memberof']      = $entries[0]['memberof'];
-	$_SESSION['dn']            = $entries[0]['dn'];
-        $_SESSION['loginCounter']  = 0;
+	$_SESSION['authenticated']  = true;
+	$_SESSION['login']          = $login;
+	$_SESSION['password']       = $password;
+	$_SESSION['objectclass']    = $entries[0]['objectclass'];
+	$_SESSION['memberof']       = $entries[0]['memberof'];
+	$_SESSION['dn']             = $entries[0]['dn'];
+	$_SESSION['thumbnailphoto'] = $entries[0]['thumbnailphoto'] ?? '';
+  $_SESSION['loginCounter']  = 0;
 
-        if (is_array($_SESSION['memberof']) && count($_SESSION['memberof'])) {
-            $_SESSION['administrator'] = !(array_search(strtolower($ldap_administration_dn), array_map('strtolower', $_SESSION['memberof'])) === false);
-        }
+  if (is_array($_SESSION['memberof']) && count($_SESSION['memberof'])) {
+      $_SESSION['administrator'] = !(array_search(strtolower($ldap_administration_dn), array_map('strtolower', $_SESSION['memberof'])) === false);
+  }
 
 	header('Location: index.php');
 

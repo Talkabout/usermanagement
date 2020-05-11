@@ -17,10 +17,9 @@
               <ul class="nav navbar-nav">
 		<?php if ($_SESSION['authenticated']) { ?>
 		<li class="<?php if ( $action === "change" ) { echo "active"; } ?>">
-                  <a href="?action=change"
-                     data-toggle="menu-popover"
-                     data-content="<?php echo htmlentities(strip_tags($messages["passwordchange"])); ?>"
-                  ><i class="fa fa-fw fa-lock"></i> <?php echo $messages["passwordchange"]; ?></a>
+                  <a href="?action=change">
+                    <i class="fa fa-fw fa-lock"></i> <?php echo $messages["passwordchange"]; ?>
+                  </a>
                 </li>
                 <?php if ( $use_questions ) { ?>
                 <li class="<?php if ( $action === "resetbyquestions" or $action === "setquestions" ) { echo "active"; } ?>">
@@ -40,16 +39,14 @@
                 <?php } ?>
                 <?php if ( $_SESSION['administrator']) { ?>
 		<li class="<?php if ( $action === "create" ) { echo "active"; } ?>">
-                  <a href="?action=create"
-                     data-toggle="menu-popover"
-                     data-content="<?php echo htmlentities(strip_tags($messages["create"])); ?>"
-                  ><i class="fa fa-fw fa-user-plus"></i> <?php echo $messages["menucreate"]; ?></a>
+                  <a href="?action=create">
+                    <i class="fa fa-fw fa-user-plus"></i> <?php echo $messages["menucreate"]; ?>
+                  </a>
                 </li>
                 <li class="<?php if ( $action === "delete" ) { echo "active"; } ?>">
-                  <a href="?action=delete"
-                     data-toggle="menu-popover"
-                     data-content="<?php echo htmlentities(strip_tags($messages["delete"])); ?>"
-                  ><i class="fa fa-fw fa-user-times"></i> <?php echo $messages["menudelete"]; ?></a>
+                  <a href="?action=delete">
+                    <i class="fa fa-fw fa-user-times"></i> <?php echo $messages["menudelete"]; ?>
+                  </a>
                 </li>
                 <?php } ?>
 		<?php if ( $_SESSION['authenticated'] ) { ?>
@@ -75,10 +72,24 @@
               <ul style="float: right;" class="nav navbar-nav">
 <?php if ($_SESSION['authenticated']) { ?>
 		<li>
-                  <a href="?login=<?php echo $_SESSION['login']; ?>"
-                     data-toggle="menu-popover"
-                     data-content="<?php echo htmlentities(strip_tags($_SESSION['login'])); ?>"
-                  ><i class="fa fa-fw fa-user"></i> <?php echo $_SESSION['login']; ?></a>
+<?php if ($_SESSION['thumbnailphoto']) { ?>
+                  <a class="profile-image-link" href="?login=<?php echo $_SESSION['login']; ?>">
+                    <div
+                       class="profile-image"
+                       style="background-image:url('pages/avatar.php');"
+                       data-toggle="popover"
+                       data-content="<div class='profile-image large' style=&quot;background-image:url('pages/avatar.php');&quot;></div>"
+                       data-html="true"
+                    >
+                    </div>
+                  </a>
+<?php } ?>
+                  <a href="?login=<?php echo $_SESSION['login']; ?>">
+<?php if (!$_SESSION['thumbnailphoto']) { ?>
+                    <i class="fa fa-fw fa-user"></i>
+<?php } ?>
+                    <?php echo $_SESSION['login']; ?>
+                  </a>
                 </li>
 		<li>
                   <a href="?action=logout"
