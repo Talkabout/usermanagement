@@ -153,6 +153,7 @@ $messages['initials'] = "Initials";
 $messages['telephonenumber'] = "Telephone Number (Business)";
 $messages['othertelephone'] = "Additional Telephone Number (Business)";
 $messages['wwwhomepage'] = "Homepage";
+$messages['url'] = "Additional Homepage";
 $messages['homepageinvalid'] = "Provided URL is invalid";
 $messages['streetaddress'] = "Street";
 $messages['l'] = "City";

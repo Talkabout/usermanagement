@@ -155,6 +155,7 @@ $messages['initials'] = "Initialen";
 $messages['telephonenumber'] = "Telefonnummer (Geschäftlich)";
 $messages['othertelephone'] = "Weitere Telefonnummer (Geschäftlich)";
 $messages['wwwhomepage'] = "Homepage";
+$messages['url'] = "Weitere Homepage";
 $messages['homepageinvalid'] = "Die angegebene URL ist ungültig";
 $messages['streetaddress'] = "Strasse/Hausnummer";
 $messages['l'] = "Stadt";

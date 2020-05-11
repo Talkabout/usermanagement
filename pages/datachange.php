@@ -141,6 +141,12 @@ $attributeMapping = array(
         'icon' => 'globe',
         'tab' => $messages['tabcontact']
     ),
+    'url' => array(
+        'icon' => 'globe',
+        'tab' => $messages['tabcontact'],
+        'dependency' => 'wwwhomepage'
+    ),
+
     'thumbnailphoto' => array(
         'icon' => 'photo',
         'tab' => $messages['tabgeneral']
@@ -180,37 +186,39 @@ if (isset($_POST) && sizeof($_POST)) {
         echo ob_get_clean();
 
         foreach ($_FILES as $key => $file) {
-	    if ($file['error'] === UPLOAD_ERR_NO_FILE) {
+            if ($file['error'] === UPLOAD_ERR_NO_FILE) {
                 continue;
-	    }
+            }
             if ($file['error'] === UPLOAD_ERR_OK && preg_match('/^data_(.+)$/', $key, $matches)) {
-		$file = file_get_contents($file['tmp_name']);
-		if ($image = imagecreatefromstring($file)) {
+                $file = file_get_contents($file['tmp_name']);
+                if ($image = imagecreatefromstring($file)) {
                     ob_start();
                     imagejpeg($image);
                     $data['photo'] = array(ob_get_clean());
-		    $image = imagescale($image, 500);
-		    $height = imagesy($image);
-		    $image = imagecrop($image, array('x' => 0, 'y' => ($height > 500 ? round(($height - 500)/2) : 0), 'width' => 500, 'height' => 500));
-		    ob_start();
+                    $image = imagescale($image, 500);
+                    $height = imagesy($image);
+                    $image = imagecrop($image, array('x' => 0, 'y' => ($height > 500 ? round(($height - 500)/2) : 0), 'width' => 500, 'height' => 500));
+                    ob_start();
                     imagejpeg($image);
-		    $data[$matches[1]] = array(ob_get_clean());
-		    $data['jpegphoto'] = $data[$matches[1]];
-		}
-		else {
-		    $result = 'imageinvalid';
-		    $data = null;
-		}
+                    $data[$matches[1]] = array(ob_get_clean());
+                    $data['jpegphoto'] = $data[$matches[1]];
+                }
+                else {
+                    $result = 'imageinvalid';
+                    $data = null;
+                }
             }
         }
     }
 
-    if (isset($data['wwwhomepage'])) {
-        foreach ($data['wwwhomepage'] as $homepage) {
-            if ($homepage && !filter_var($homepage, FILTER_VALIDATE_URL)) {
-                $result = "homepageinvalid";
-                $data = null;
-                break;
+    foreach (array('wwwhomepage', 'url') as $name) {
+        if (isset($data[$name])) {
+            foreach ($data[$name] as $homepage) {
+                if ($homepage && !filter_var($homepage, FILTER_VALIDATE_URL)) {
+                    $result = "homepageinvalid";
+                    $data = null;
+                    break;
+                }
             }
         }
     }
