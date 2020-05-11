@@ -48,10 +48,10 @@ $ldap_administration_dn = "cn=Domain Admins,cn=Users,dc=home,dc=intern";
 # Format:
 #     'NAME_OF_THE_LDAP_ATTRIBUTE' => array(
 #         'icon' => 'NAME_OF_THE_FONTAWSOME_ICON_TO_USE',
-#         'tab' => 'NAME_OF_THE_TAB_WHERE_THE_ATTRIBUTE_SHOULD_BE_SHOWN'
+#         'tab' => 'NAME_OF_THE_TAB_WHERE_THE_ATTRIBUTE_SHOULD_BE_SHOWN',
+#         'admin' => IF_TRUE_ONLY_ADMIN_CAN_SEE_OR_CHANGE_THIS_VALUE
 #     )
-$ldap_additional_attributes = array(
-);
+$ldap_additional_attributes = array();
 
 # Active Directory mode
 # true: use unicodePwd as password field
@@ -149,21 +149,12 @@ $show_extended_error = false;
 $use_change = true;
 
 ## SSH Key Change
-# Allow changing of sshPublicKey?
-$change_sshkey = false;
-
-# What attribute should be changed by the changesshkey action?
-$change_sshkey_attribute = "sshPublicKey";
-
-# Who changes the sshPublicKey attribute?
-# Also applicable for question/answer save
-# user: the user itself
-# manager: the above binddn
-$who_change_sshkey = "user";
-
-# Notify users anytime their sshPublicKey is changed
-## Requires mail configuration below
-$notify_on_sshkey_change = false;
+# To allow changing public key, active below definition and alter the attribute name and admin mode
+#$ldap_additional_attributes['sshpublickey'] = array(
+#    'icon' => 'key',
+#    'tab' => 'tabkeys',
+#    'admin' => true
+#);
 
 ## Questions/answers
 # Use questions/answers?
