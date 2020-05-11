@@ -16,6 +16,7 @@ The application can be used on standard LDAPv3 directories (OpenLDAP, OpenDS, Ap
 ![6 - user management - object classes](https://user-images.githubusercontent.com/10157917/81551985-fdb8ce00-9382-11ea-8c77-4dfa6d2653d9.jpg)
 ![7 - user management - address](https://user-images.githubusercontent.com/10157917/81551991-00b3be80-9383-11ea-88fc-eda01a998e97.jpg)
 ![8 - user management - contact](https://user-images.githubusercontent.com/10157917/81551999-03aeaf00-9383-11ea-8641-0af2eaf80d54.jpg)
+![8 1 - user management - keys](https://user-images.githubusercontent.com/10157917/81591341-90c22a00-93bc-11ea-8b4c-1eb52804c85f.jpg)
 ![9 - password management](https://user-images.githubusercontent.com/10157917/81552011-06110900-9383-11ea-92f0-8b9c711350a1.jpg)
 ![10 - add user](https://user-images.githubusercontent.com/10157917/81552018-090bf980-9383-11ea-8516-bea4a1796680.jpg)
 ![11 - delete user](https://user-images.githubusercontent.com/10157917/81552028-0d381700-9383-11ea-806f-de85ef9de5e5.jpg)
