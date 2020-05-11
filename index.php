@@ -21,6 +21,8 @@
 
 ob_start();
 
+session_start();
+
 #==============================================================================
 # Includes
 #==============================================================================
@@ -39,7 +41,7 @@ if ($use_pwnedpasswords) {
 #==============================================================================
 # Error reporting
 #==============================================================================
-error_reporting(0);
+//error_reporting(0);
 if($debug) {
     error_reporting(E_ALL);
     // Important to get error details in case of SSL/TLS failure at connection
@@ -97,12 +99,18 @@ if ( ( ( $use_tokens and $crypt_tokens ) or $use_sms or $crypt_answers ) and ( e
 #==============================================================================
 # Action
 #==============================================================================
-if (!isset($default_action)) { $default_action = "change"; }
+if (!isset($default_action)) { $default_action = "datachange"; }
 if (isset($_GET["action"]) and $_GET["action"]) { $action = $_GET["action"]; }
 else { $action = $default_action; }
 
+if ($action == 'logout') {
+  session_destroy();
+  header('Location: index.php');
+  exit();
+}
+
 # Available actions
-$available_actions = array();
+$available_actions = array('delete', 'create', 'datachange', 'devicechange');
 if ( $use_change ) { array_push( $available_actions, "change"); }
 if ( $change_sshkey ) { array_push( $available_actions, "changesshkey"); }
 if ( $use_questions ) { array_push( $available_actions, "resetbyquestions", "setquestions"); }
@@ -114,7 +122,6 @@ if ( ! in_array($action, $available_actions) ) { $action = $default_action; }
 
 # Get source for menu
 if (isset($_REQUEST["source"]) and $_REQUEST["source"]) { $source = $_REQUEST["source"]; }
-else { $source="unknown"; }
 
 #==============================================================================
 # Other default values
@@ -140,12 +147,10 @@ $pwd_policy_config = array(
     "pwd_no_reuse"            => $pwd_no_reuse,
     "pwd_diff_login"          => $pwd_diff_login,
     "pwd_complexity"          => $pwd_complexity,
-    "use_pwnedpasswords"      => $use_pwnedpasswords,
-    "pwd_no_special_at_ends"  => $pwd_no_special_at_ends
+    "use_pwnedpasswords"      => $use_pwnedpasswords
 );
 
 if (!isset($pwd_show_policy_pos)) { $pwd_show_policy_pos = "above"; }
-if (!isset($obscure_failure_messages)) { $obscure_failure_messages = array(); }
 
 #==============================================================================
 # Email Config
@@ -167,7 +172,6 @@ $mailer->SMTPAuth      = $mail_smtp_auth;
 $mailer->Username      = $mail_smtp_user;
 $mailer->Password      = $mail_smtp_pass;
 $mailer->SMTPKeepAlive = $mail_smtp_keepalive;
-$mailer->SMTPOptions   = $mail_smtp_options;
 $mailer->Timeout       = $mail_smtp_timeout;
 $mailer->LE            = $mail_newline;
 
@@ -185,15 +189,20 @@ $mailer->LE            = $mail_newline;
     <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css" />
     <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="css/self-service-password.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
     <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
     <link href="images/favicon.ico" rel="shortcut icon" />
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.tabcollapse.js"></script>
+    <script src="js/scripts.js"></script>
 <?php if (isset($background_image)) { ?>
      <style>
        html, body {
          background: url("<?php echo $background_image ?>") no-repeat center fixed;
          background-size: cover;
        }
-  </style>
+    </style>
 <?php } ?>
 </head>
 <body>
@@ -225,7 +234,12 @@ $mailer->LE            = $mail_newline;
             <?php
         }
     } else {
-        include("pages/$action.php");
+	if (!$_SESSION['authenticated'] && $action !== 'sendtoken' && $action !== 'resetbytoken') {
+            include("pages/login.php");
+	}
+	else {
+            include("pages/$action.php");
+	}
     }
 ?>
 
@@ -234,16 +248,24 @@ $mailer->LE            = $mail_newline;
 
 </div>
 
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function(){
         // Menu links popovers
         $('[data-toggle="menu-popover"]').popover({
+            trigger: 'focus',
+            placement: 'bottom',
+            container: 'body' // Allows the popover to be larger than the menu button
+        });
+
+        $('[data-toggle="popover"]').popover({
             trigger: 'hover',
             placement: 'bottom',
             container: 'body' // Allows the popover to be larger than the menu button
         });
+
+        $('form').find('input:placeholder-shown').eq(0).focus();
+
+        $('.nav-tabs').tabCollapse();
     });
 </script>
 </body>
