@@ -47,9 +47,14 @@ $ldap_administration_dn = "cn=Domain Admins,cn=Users,dc=home,dc=intern";
 #define additional attributes to be read from ldap and shown in the form
 # Format:
 #     'NAME_OF_THE_LDAP_ATTRIBUTE' => array(
-#         'icon' => 'NAME_OF_THE_FONTAWSOME_ICON_TO_USE',
-#         'tab' => 'NAME_OF_THE_TAB_WHERE_THE_ATTRIBUTE_SHOULD_BE_SHOWN',
-#         'admin' => IF_TRUE_ONLY_ADMIN_CAN_SEE_OR_CHANGE_THIS_VALUE
+#         'icon' => 'key',              name of the fontawsome icon that should be shown in the icon field
+#         'tab' => 'tabname',           the tab name this value is shown in (if value is found in $messages locale array, it is translated)
+#         'admin' => true/false,        if true, only admin can see the attribute (default: false)
+#         'values' => array(            if set, only those values are available for selection
+#             'value1' => 'value1'
+#             'value2' => 'value2'
+#             ...
+#         )
 #     )
 $ldap_additional_attributes = array();
 
