@@ -2,7 +2,7 @@
 
 ## Presentation
 
-Usermangement is a PHP application based on "Self Service Password" that allows users to manage their data in an LDAP directory.
+Usermangement is a PHP application based on "Self Service Password" (https://github.com/ltb-project/self-service-password) that allows users to manage their data in an LDAP directory.
 
 The application can be used on standard LDAPv3 directories (OpenLDAP, OpenDS, ApacheDS, Sun Oracle DSEE, Novell, etc.) and also on Active Directory. Currently I am only able to test it on a Samba Active Directory environmnet. Thanks to everybody who can check if it works with other LDAP services also!
 
