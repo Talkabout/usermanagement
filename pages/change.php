@@ -26,7 +26,7 @@
 #==============================================================================
 # Initiate vars
 $result = "";
-$login = $presetLogin;
+$login = $_SESSION['login'];
 $confirmpassword = "";
 $newpassword = "";
 $oldpassword = "";
@@ -42,9 +42,7 @@ if (isset($_POST["newpassword"]) and $_POST["newpassword"]) { $newpassword = str
  else { $result = "newpasswordrequired"; }
 if (isset($_POST["oldpassword"]) and $_POST["oldpassword"]) { $oldpassword = strval($_POST["oldpassword"]); }
  else { $result = "oldpasswordrequired"; }
-if (isset($_REQUEST["login"]) and $_REQUEST["login"]) { $login = strval($_REQUEST["login"]); }
- else { $result = "loginrequired"; }
-if (! isset($_REQUEST["login"]) and ! isset($_POST["confirmpassword"]) and ! isset($_POST["newpassword"]) and ! isset($_POST["oldpassword"]))
+if (! isset($_POST["confirmpassword"]) and ! isset($_POST["newpassword"]) and ! isset($_POST["oldpassword"]))
  { $result = "emptychangeform"; }
 
 # Check the entered username for characters that our installation doesn't support
@@ -249,15 +247,6 @@ if ($pwd_show_policy_pos === 'above') {
 <div class="alert alert-info">
 <form action="#" method="post" class="form-horizontal">
     <div class="form-group">
-        <label for="login" class="col-sm-4 control-label"><?php echo $messages["login"]; ?></label>
-        <div class="col-sm-8">
-            <div class="input-group">
-                <span class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
-                <input type="text" name="login" id="login" value="<?php echo htmlentities($login) ?>" class="form-control" placeholder="<?php echo $messages["login"]; ?>" />
-            </div>
-        </div>
-    </div>
-    <div class="form-group">
         <label for="oldpassword" class="col-sm-4 control-label"><?php echo $messages["oldpassword"]; ?></label>
         <div class="col-sm-8">
             <div class="input-group">
@@ -326,3 +315,4 @@ if ($pwd_show_policy_pos === 'below') {
 
 }
 ?>
+

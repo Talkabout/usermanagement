@@ -26,7 +26,7 @@
 #==============================================================================
 # Initiate vars
 $result = "";
-$login = $presetLogin;
+$login = "";
 $mail = "";
 $ldap = "";
 $userdn = "";
@@ -173,7 +173,7 @@ if ( $result === "" ) {
         # Build reset by token URL
         $method = "http";
         if ( !empty($_SERVER['HTTPS']) ) { $method .= "s"; }
-        $server_name = $_SERVER['SERVER_NAME'];
+        $server_name = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'];
         $server_port = $_SERVER['SERVER_PORT'];
         $script_name = $_SERVER['SCRIPT_NAME'];
 
@@ -213,7 +213,8 @@ if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"
 ?>
 
 <div class="result alert alert-<?php echo get_criticity($result) ?>">
-<p><i class="fa fa-fw <?php echo get_fa_class($result) ?>" aria-hidden="true"></i> <?php echo $messages[$result]; ?></p>
+<p><i class="fa fa-fw <?php echo get_fa_class($result) ?>" aria-hidden="true"></i> <?php echo $messages[$result]; ?>
+</p>
 </div>
 
 <?php if ( $result !== "tokensent" ) { ?>
