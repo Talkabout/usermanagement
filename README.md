@@ -1,11 +1,8 @@
-# LDAP Tool Box Self Service Password
-
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/372/badge)](https://bestpractices.coreinfrastructure.org/projects/372)
-[![Build Status](https://travis-ci.org/ltb-project/self-service-password.svg?branch=master)](https://travis-ci.org/ltb-project/self-service-password)
+# LDAP Usermanagement
 
 ## Presentation
 
-Self Service Password is a PHP application that allows users to change their password in an LDAP directory.
+Usermangement is a PHP application based on "Self Service Password" that allows users manage their data in an LDAP directory.
 
 The application can be used on standard LDAPv3 directories (OpenLDAP, OpenDS, ApacheDS, Sun Oracle DSEE, Novell, etc.) and also on Active Directory.
 
@@ -37,14 +34,7 @@ It has the following features:
   * php-curl (haveibeenpwned api)
   * php-ldap
   * php-filter
+  * php-intl
 * strong cryptography functions available (for random_compat, php 7 or libsodium or /dev/urandom readable or php-mcrypt extension installed)
 * valid PHP mail server configuration (reset mail)
-* valid PHP session configuration (reset mail)
-
-## Documentation
-
-Documentation is available on http://ltb-project.org/wiki/documentation/self-service-password
-
-## Download
-
-Tarballs and packages for Debian and Red Hat are available on http://ltb-project.org/wiki/download#self_service_password
+* valid PHP session
