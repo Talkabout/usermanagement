@@ -145,7 +145,7 @@ $attributeMapping = array(
 );
 
 if (isset($ldap_additional_attributes) && is_array($ldap_additional_attributes)) {
-    $attributeMapping = array_merge($attributeMapping, $ldap_additional_attributes);
+    $attributeMapping = array_replace_recursive($attributeMapping, $ldap_additional_attributes);
 }
 
 $availableValues['memberof'] = array();
