@@ -1,0 +1,86 @@
+.form-group.multiple .input-group-addon.delete {
+    display: none;
+}
+
+.form-group.multiple .input-group-addon.add {
+    display: table-cell;
+}
+
+.form-group.multiple:nth-child(n+2) .input-group-addon.add {
+    display: table-cell;
+}
+
+.form-group.multiple:nth-child(n+2) .input-group-addon.delete {
+    display: table-cell;
+}
+
+.group-container {
+    padding: 0px 10px;
+}
+
+.group-container.multiple {
+    margin-bottom: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,.25);
+}
+
+.group-container.user {
+    border-bottom: 1px solid #DDD;
+    margin-bottom: 10px;
+}
+
+.group-container.multiple.open {
+    box-shadow: none;
+}
+
+.group-container.multiple.open a {
+    display: none;
+}
+
+.collapse {
+    padding-bottom: 1px;
+}
+
+.tab-pane {
+  padding-top: 10px;
+}
+
+a {
+    color: #555;
+}
+
+.profile-image {
+    position: relative;
+    top: -10px;
+    float: right;
+    width: 50px;
+    height: 50px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.profile-image.large {
+    width: 200px;
+    height: 200px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-top: 10px;
+}
+
+.tab-content {
+    position: relative;
+}
+
+.navbar-header > a.active {
+    background-image: -webkit-linear-gradient(top,#ebebeb 0,#f3f3f3 100%);
+    background-image: -o-linear-gradient(top,#ebebeb 0,#f3f3f3 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#ebebeb),to(#f3f3f3));
+    background-image: linear-gradient(to bottom,#ebebeb 0,#f3f3f3 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffebebeb', endColorstr='#fff3f3f3', GradientType=0);
+    background-repeat: repeat-x;
+    -webkit-box-shadow: inset 0 3px 9px rgba(0,0,0,.075);
+    box-shadow: inset 0 3px 9px rgba(0,0,0,.075);
+}
+
+.result.alert > p {
+    display: inline-block;
+}
