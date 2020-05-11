@@ -60,7 +60,7 @@ $attributeMapping = array(
         'tab' => $messages['tabgeneral']
     ),
     'memberof' => array(
-        'icon' => 'key',
+        'icon' => 'unlock',
         'tab' => $messages['tabgroups'],
         'admin' => true,
         'values' => array()
