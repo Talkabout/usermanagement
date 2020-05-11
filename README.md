@@ -50,6 +50,7 @@ It has the following features:
 
 ## Prerequisite
 
+* rename "conf/config.inc.default.php" to "conf/config.inc.php" and adjust your settings
 * PHP extensions required:
   * php-openssl (token crypt, probably built-in)
   * php-mbstring (reset mail)
