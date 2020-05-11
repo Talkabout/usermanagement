@@ -38,7 +38,12 @@ It has the following features:
 * Mail notification after password change
 * Hook script after password change
 * editing of general user settings in ldap
-* administration mode (based on configurable user group) to change other users settings and assign groups/object classes
+* upload profile images to ldap (full size image stored in 'photo' attribute, scaled down images (500x500) stored in 'thumbnailPhoto' and 'jpegPhoto')
+* administration mode (based on configurable user group) to
+  * change other users settings
+  * assign groups/object classes
+  * create users
+  * delete users
 
 ## Prerequisite
 * PHP extensions required:
