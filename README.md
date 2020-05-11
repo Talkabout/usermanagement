@@ -48,6 +48,8 @@ It has the following features:
   * assign groups/object classes
   * create users
   * delete users
+* dynamic configuration of custom attributes to show/edit
+* alter configuration of existing attributes
 
 ## Prerequisite
 
