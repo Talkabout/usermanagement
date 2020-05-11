@@ -62,12 +62,14 @@ $attributeMapping = array(
     'memberof' => array(
         'icon' => 'key',
         'tab' => $messages['tabgroups'],
-        'admin' => true
+        'admin' => true,
+        'values' => array()
     ),
     'objectclass' => array(
         'icon' => 'tag',
         'tab' => $messages['tabobjectclasses'],
-        'admin' => true
+        'admin' => true,
+        'values' => array()
     ),
     'mail' => array(
         'icon' => 'envelope',
@@ -96,7 +98,8 @@ $attributeMapping = array(
     ),
     'c' => array(
         'icon' => 'map-marker',
-        'tab' => $messages['tabaddress']
+        'tab' => $messages['tabaddress'],
+        'values' => get_country_codes($lang)
     ),
     'homephone' => array(
         'icon' => 'phone',
@@ -147,10 +150,6 @@ $attributeMapping = array(
 if (isset($ldap_additional_attributes) && is_array($ldap_additional_attributes)) {
     $attributeMapping = array_replace_recursive($attributeMapping, $ldap_additional_attributes);
 }
-
-$availableValues['memberof'] = array();
-$availableValues['objectclass'] = array();
-$availableValues['c'] = get_country_codes($lang);
 
 $files['thumbnailphoto'] = true;
 
@@ -291,16 +290,16 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
 
                         foreach ($entries as $key => $value) {
                             if (is_numeric($key)) {
-                               $availableValues['memberof'][$value[dn]] = $value['cn'][0];
+                               $attributeMapping['memberof']['values'][$value[dn]] = $value['cn'][0];
                             }
                         }
 
-                        asort($availableValues['memberof'], SORT_NATURAL | SORT_FLAG_CASE);
+                        asort($attributeMapping['memberof']['values'], SORT_NATURAL | SORT_FLAG_CASE);
 
-                        $_SESSION['allgroups'] = $availableValues['memberof'];
+                        $_SESSION['allgroups'] = $attributeMapping['memberof']['values'];
                     }
                     else {
-                        $availableValues['memberof'] = $_SESSION['allgroups'];
+                        $attributeMapping['memberof']['values'] = $_SESSION['allgroups'];
                     }
 
                     if (!isset($_SESSION['allobjectclasses'])) {
@@ -309,16 +308,16 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
 
                         foreach ($entries as $key => $value) {
                             if (is_numeric($key)) {
-                                $availableValues['objectclass'][$value['ldapdisplayname'][0]] = $value['ldapdisplayname'][0];
+                                $attributeMapping['objectclass']['values'][$value['ldapdisplayname'][0]] = $value['ldapdisplayname'][0];
                             }
                         }
 
-                        asort($availableValues['objectclass'], SORT_NATURAL | SORT_FLAG_CASE);
+                        asort($attributeMapping['objectclass']['values'], SORT_NATURAL | SORT_FLAG_CASE);
 
-                        $_SESSION['allobjectclasses'] = $availableValues['objectclass'];
+                        $_SESSION['allobjectclasses'] = $attributeMapping['objectclass']['values'];
                     }
                     else {
-                        $availableValues['objectclass'] = $_SESSION['allobjectclasses'];
+                        $attributeMapping['objectclass']['values'] = $_SESSION['allobjectclasses'];
                     }
 
                     if (!isset($_SESSION['allusers'])) {
@@ -481,9 +480,9 @@ if ($pwd_show_policy_pos === 'above') {
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-<?php echo $attributeMapping[$name]['icon']; ?>"></i></span>
-<?php if (isset($availableValues[$name])) { ?>
+<?php if (isset($attributeMapping[$name]['values'])) { ?>
 		<select class="form-control" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>">
-<?php foreach ($availableValues[$name] as $availableKey => $availableValue) { ?>
+<?php foreach ($attributeMapping[$name]['values'] as $availableKey => $availableValue) { ?>
 		    <option value="<?php echo $availableKey; ?>" <?php if (strtolower($availableKey) == strtolower($value) || strtolower($availableValue) == strtolower($value)) echo 'selected="selected"'; ?>><?php echo $availableValue; ?></option>
 <?php } ?>
 		</select>
