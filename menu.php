@@ -72,23 +72,19 @@
               <ul style="float: right;" class="nav navbar-nav">
 <?php if ($_SESSION['authenticated']) { ?>
 		<li>
+                  <a href="?login=<?php echo $_SESSION['login']; ?>">
 <?php if ($_SESSION['thumbnailphoto']) { ?>
-                  <a class="profile-image-link" href="?login=<?php echo $_SESSION['login']; ?>">
                     <div
                        class="profile-image"
-                       style="background-image:url('pages/avatar.php');"
                        data-toggle="popover"
-                       data-content="<div class='profile-image large' style=&quot;background-image:url('pages/avatar.php');&quot;></div>"
+                       data-content="<div class='profile-image large'></div>"
                        data-html="true"
                     >
                     </div>
-                  </a>
-<?php } ?>
-                  <a href="?login=<?php echo $_SESSION['login']; ?>">
-<?php if (!$_SESSION['thumbnailphoto']) { ?>
+<?php } else { ?>
                     <i class="fa fa-fw fa-user"></i>
 <?php } ?>
-                    <?php echo $_SESSION['login']; ?>
+                    <span><?php echo $_SESSION['login']; ?></span>
                   </a>
                 </li>
 		<li>
