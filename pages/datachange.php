@@ -146,7 +146,29 @@ $attributeMapping = array(
         'tab' => $messages['tabcontact'],
         'dependency' => 'wwwhomepage'
     ),
-
+    'title' => array(
+        'icon' => 'user',
+        'tab' => $messages['taborganization']
+    ),
+    'department' => array(
+        'icon' => 'user',
+        'tab' => $messages['taborganization']
+    ),
+    'company' => array(
+        'icon' => 'user',
+        'tab' => $messages['taborganization']
+    ),
+    'manager' => array(
+        'icon' => 'user',
+        'tab' => $messages['taborganization'],
+        'values' => array('' => '')
+    ),
+    'directreports' => array(
+        'icon' => 'user',
+        'tab' => $messages['taborganization'],
+        'readonly' => true,
+        'values' => array()
+    ),
     'thumbnailphoto' => array(
         'icon' => 'photo',
         'tab' => $messages['tabgeneral']
@@ -329,13 +351,20 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     }
 
                     if (!isset($_SESSION['allusers'])) {
-                        $ldapResult = ldap_search($ldap, "cn=Users," . $ldap_base, "objectclass=user", array('dn', 'cn'));
+                        $ldapResult = ldap_search($ldap, "cn=Users," . $ldap_base, "objectclass=user", array('dn', 'cn', 'givenName', 'sn'));
                         $entries    = ldap_get_entries($ldap, $ldapResult);
                         $users      = array();
 
                         foreach ($entries as $key => $value) {
                             if (is_numeric($key)) {
-                                $users[$value[dn]] = $value['cn'][0];
+                                $fullname = $value['sn'][0] . ', ' . $value['givenname'][0];
+                                if (!trim($fullname, ' ,')) {
+                                    $fullname = $value['cn'][0];
+                                }
+                                else {
+                                    $fullname .= ' (' . $value['cn'][0] . ')';
+                                }
+                                $users[$value[dn]] = $fullname;
                             }
                         }
 
@@ -346,6 +375,9 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     else {
                         $users = $_SESSION['allusers'];
                     }
+
+                    $attributeMapping['manager']['values'] = array_merge(array('' => ''), $users);
+                    $attributeMapping['directreports']['values'] = array_merge(array('' => ''), $users);
                 }
 
                 $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(ldapdisplayname=' . implode(')(ldapdisplayname=', array_keys($attributeMapping)) . '))', array('dn', 'cn', 'isSingleValued', 'ldapdisplayname'));
@@ -461,8 +493,11 @@ if ($pwd_show_policy_pos === 'above') {
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
 		<select class="form-control" name="login" id="login" onchange="location.href = '?login=' + this[this.selectedIndex].value">
-<?php foreach ($users as $dn => $name) { ?>
-		    <option value="<?php echo $name; ?>" <?php if ($currentlogin == $name) echo 'selected="selected"'; ?>><?php echo $name; ?></option>
+<?php foreach ($users as $dn => $name) {
+    preg_match('/^cn=([^,]+)/i', $dn, $matches);
+    $cn = $matches[1];
+?>
+		    <option value="<?php echo $cn ; ?>" <?php if ($userdn == $dn) echo 'selected="selected"'; ?>><?php echo $name; ?></option>
 <?php } ?>
 		</select>
             </div>
@@ -482,17 +517,22 @@ if ($pwd_show_policy_pos === 'above') {
 <div id="<?php echo $name; ?>">
 <?php foreach ($values as $key => $value) { ?>
 <?php if (is_numeric($key)) { ?>
+<?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly'] && empty($value)) continue; ?>
     <div class="form-group <?php echo ($attributes[$name]['multiple'] ? 'multiple' : '') . ' ' . $name; ?>">
         <label for="<?php echo $name; ?>" class="col-sm-4 control-label"><?php echo ($attributes[$name]['multiple'] ? ($key + 1) . '. ' : '') . ($messages[$name] ?? $name); ?></label>
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-<?php echo $attributeMapping[$name]['icon']; ?>"></i></span>
 <?php if (isset($attributeMapping[$name]['values'])) { ?>
+<?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly']) { ?>
+    <input type="text" value="<?php echo htmlentities($attributeMapping[$name]['values'][$value]); ?>" class="form-control" readonly="readonly" />
+<?php } else { ?>
 		<select class="form-control" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>">
 <?php foreach ($attributeMapping[$name]['values'] as $availableKey => $availableValue) { ?>
 		    <option value="<?php echo $availableKey; ?>" <?php if (strtolower($availableKey) == strtolower($value) || strtolower($availableValue) == strtolower($value)) echo 'selected="selected"'; ?>><?php echo $availableValue; ?></option>
 <?php } ?>
 		</select>
+<?php } ?>
 <?php } elseif (isset($files[$name])) { ?>
                 <input type="text" name="filename_<?php echo $name; ?>" id="filename_<?php echo $name; ?>" value="" class="form-control" placeholder="" readonly="readonly" />
 	        <label class="btn btn-default input-group-addon">
@@ -506,9 +546,13 @@ if ($pwd_show_policy_pos === 'above') {
                      });
 		</script>
 <?php } else { ?>
+<?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly']) { ?>
+                <input type="text" value="<?php echo htmlentities($value) ?>" class="form-control" />
+<?php } else { ?>
                 <input type="text" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>" value="<?php echo htmlentities($value) ?>" class="form-control" placeholder="<?php echo $messages[$name . 'placeholder']; ?>" />
 <?php } ?>
-<?php if ($attributes[$name]['multiple']) { ?>
+<?php } ?>
+<?php if ($attributes[$name]['multiple'] && (!isset($attributeMapping[$name]['readonly']) || !$attributeMapping[$name]['readonly'])) { ?>
                 <span class="input-group-addon btn btn-default delete" style="cursor: pointer;" onclick="delete_parent_form_group(this);"><i style="color: red;" class="fa fa-fw fa-times"></i></span>
                 <span class="input-group-addon btn btn-default add" style="cursor: pointer;" onclick="clone_parent_form_group(this);"><i class="fa fa-fw fa-plus"></i></span>
 <?php } ?>
