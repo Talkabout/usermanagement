@@ -85,7 +85,7 @@ if ( $result === "" ) {
 
     # Search for user
     $ldap_filter = str_replace("{login}", $login, $ldap_filter);
-    $search = ldap_search($ldap, $ldap_base, $ldap_filter, array('objectclass', 'memberof', 'dn', 'thumbnailphoto'));
+    $search = ldap_search($ldap, $ldap_base, $ldap_filter, array('objectclass', 'memberof', 'dn', 'thumbnailphoto', 'cn'));
     $entries = ldap_get_entries($ldap, $search);
 
     $errno = ldap_errno($ldap);
@@ -238,7 +238,7 @@ if ($pwd_show_policy_pos === 'below') {
 <?php } else {
 
 	$_SESSION['authenticated']  = true;
-	$_SESSION['login']          = $login;
+	$_SESSION['login']          = $entries[0]['cn'][0];
 	$_SESSION['password']       = $password;
 	$_SESSION['objectclass']    = $entries[0]['objectclass'];
 	$_SESSION['memberof']       = $entries[0]['memberof'];
