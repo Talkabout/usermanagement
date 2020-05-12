@@ -41,6 +41,9 @@ It has the following features:
 * reCAPTCHA (Google API)
 * Mail notification after password change
 * Hook script after password change
+
+# Additional Features (as compared to Self Service Password)
+
 * editing of general user settings in ldap
 * upload profile images to ldap (full size image stored in 'photo' attribute, scaled down images (500x500) stored in 'thumbnailPhoto' and 'jpegPhoto')
 * administration mode (based on configurable user group) to
