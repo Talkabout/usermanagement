@@ -166,7 +166,6 @@ $attributeMapping = array(
     'directreports' => array(
         'icon' => 'user',
         'tab' => $messages['taborganization'],
-        'readonly' => true,
         'values' => array()
     ),
     'thumbnailphoto' => array(
@@ -380,12 +379,12 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     $attributeMapping['directreports']['values'] = array_merge(array('' => ''), $users);
                 }
 
-                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(ldapdisplayname=' . implode(')(ldapdisplayname=', array_keys($attributeMapping)) . '))', array('dn', 'cn', 'isSingleValued', 'ldapdisplayname'));
+                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(ldapdisplayname=' . implode(')(ldapdisplayname=', array_keys($attributeMapping)) . '))', array('dn', 'cn', 'isSingleValued', 'ldapdisplayname', 'systemOnly'));
                 $entries = ldap_get_entries($ldap, $ldapResult);
 
                 $attributes = array();
                 foreach ($entries as $index => $entry) {
-                    $attributes[strtolower($entries[$index]['ldapdisplayname'][0])] = array('cn' => $entry['cn'][0], 'multiple' => $entry['issinglevalued'][0] == "FALSE");
+                    $attributes[strtolower($entries[$index]['ldapdisplayname'][0])] = array('cn' => $entry['cn'][0], 'multiple' => $entry['issinglevalued'][0] == "FALSE", 'systemonly' => $entry['systemonly'][0] == "TRUE");
                 }
 
                 $ldapResult = ldap_search($ldap, "cn=Users," . $ldap_base, "cn=$currentlogin", array_keys($attributeMapping));
@@ -520,14 +519,17 @@ if ($pwd_show_policy_pos === 'above') {
 <div id="<?php echo $name; ?>">
 <?php foreach ($values as $key => $value) { ?>
 <?php if (is_numeric($key)) { ?>
-<?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly'] && empty($value)) continue; ?>
+<?php
+    $readonly = ($attributes[$name]['systemonly'] || (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly']));
+?>
+<?php if ($readonly && empty($value)) continue; ?>
     <div class="form-group <?php echo ($attributes[$name]['multiple'] ? 'multiple' : '') . ' ' . $name; ?>">
         <label for="<?php echo $name; ?>" class="col-sm-4 control-label"><?php echo ($attributes[$name]['multiple'] ? ($key + 1) . '. ' : '') . ($messages[$name] ?? $name); ?></label>
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-<?php echo $attributeMapping[$name]['icon']; ?>"></i></span>
 <?php if (isset($attributeMapping[$name]['values'])) { ?>
-<?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly']) { ?>
+<?php if ($readonly) { ?>
     <input type="text" value="<?php echo htmlentities($attributeMapping[$name]['values'][$value]); ?>" class="form-control" readonly="readonly" />
 <?php } else { ?>
 		<select class="form-control" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>">
@@ -549,13 +551,13 @@ if ($pwd_show_policy_pos === 'above') {
                      });
 		</script>
 <?php } else { ?>
-<?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly']) { ?>
+<?php if ($readonly) { ?>
                 <input type="text" value="<?php echo htmlentities($value) ?>" class="form-control" readonly="readonly" />
 <?php } else { ?>
                 <input type="text" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>" value="<?php echo htmlentities($value) ?>" class="form-control" placeholder="<?php echo $messages[$name . 'placeholder']; ?>" />
 <?php } ?>
 <?php } ?>
-<?php if ($attributes[$name]['multiple'] && (!isset($attributeMapping[$name]['readonly']) || !$attributeMapping[$name]['readonly'])) { ?>
+<?php if ($attributes[$name]['multiple'] && !$readonly) { ?>
                 <span class="input-group-addon btn btn-default delete" style="cursor: pointer;" onclick="delete_parent_form_group(this);"><i style="color: red;" class="fa fa-fw fa-times"></i></span>
                 <span class="input-group-addon btn btn-default add" style="cursor: pointer;" onclick="clone_parent_form_group(this);"><i class="fa fa-fw fa-plus"></i></span>
 <?php } ?>
