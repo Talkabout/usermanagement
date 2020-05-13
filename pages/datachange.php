@@ -444,6 +444,7 @@ if (isset($_POST) and sizeof($_POST) && !preg_match('/.+invalid$/', $result)) {
     preg_match('/([^\[]+)(\[([^\]]+)\])?/', $result, $matches);
     $result = $matches[1];
     $additionalResult = ($matches[3] ?? '');
+    unset($_SESSION['allusers']);
 }
 
 #==============================================================================
