@@ -41,6 +41,7 @@ $password = $_SESSION['password'];
 $ldap = "";
 $userdn = "";
 $data= null;
+$nameattribute = ($ad_mode ? 'ldapdisplayname' : 'name');
 
 $attributeMapping = array(
     'displayname' => array(
@@ -332,12 +333,12 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     }
 
                     if (!isset($_SESSION['allobjectclasses'])) {
-                        $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, "objectclass=classSchema", array('dn', 'cn', 'ldapdisplayname'));
+                        $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, "objectclass=classSchema", array('dn', 'cn', $nameattribute));
                         $entries = ldap_get_entries($ldap, $ldapResult);
 
                         foreach ($entries as $key => $value) {
                             if (is_numeric($key)) {
-                                $attributeMapping['objectclass']['values'][$value['ldapdisplayname'][0]] = $value['ldapdisplayname'][0];
+                                $attributeMapping['objectclass']['values'][$value[$nameattribute][0]] = $value[$nameattribute][0];
                             }
                         }
 
@@ -382,12 +383,12 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     $attributeMapping['directreports']['values'] = array_merge(array('' => ''), $users);
                 }
 
-                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(ldapdisplayname=' . implode(')(ldapdisplayname=', array_keys($attributeMapping)) . '))', array('dn', 'cn', 'isSingleValued', 'ldapdisplayname', 'systemOnly'));
+                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', array_keys($attributeMapping)) . '))', array('dn', 'cn', 'isSingleValued', $nameattribute, 'systemOnly'));
                 $entries = ldap_get_entries($ldap, $ldapResult);
 
                 $attributes = array();
                 foreach ($entries as $index => $entry) {
-                    $attributes[strtolower($entries[$index]['ldapdisplayname'][0])] = array('cn' => $entry['cn'][0], 'multiple' => $entry['issinglevalued'][0] == "FALSE", 'systemonly' => $entry['systemonly'][0] == "TRUE");
+                    $attributes[strtolower($entries[$index][$nameattribute][0])] = array('cn' => $entry['cn'][0], 'multiple' => $entry['issinglevalued'][0] == "FALSE", 'systemonly' => $entry['systemonly'][0] == "TRUE");
                 }
 
                 $ldapResult = ldap_search($ldap, "cn=Users," . $ldap_base, "cn=$currentlogin", array_keys($attributeMapping));
@@ -403,7 +404,7 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     }
                 }
 
-                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(ldapdisplayname=' . implode(')(ldapdisplayname=', $data[0]['objectclass']) . '))', array('dn', 'cn', 'maycontain', 'systemmaycontain', 'ldapdisplayname'));
+                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', $data[0]['objectclass']) . '))', array('dn', 'cn', 'maycontain', 'systemmaycontain', $nameattribute));
                 $entries = ldap_get_entries($ldap, $ldapResult);
 
                 $availableAttributes = array();
