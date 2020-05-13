@@ -517,6 +517,7 @@ if ($pwd_show_policy_pos === 'above') {
 <div id="<?php echo $name; ?>">
 <?php foreach ($values as $key => $value) { ?>
 <?php if (is_numeric($key)) { ?>
+<?php if (isset($attributeMapping[$name]['hidden']) && $attributeMapping[$name]['hidden']) continue; ?>
 <?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly'] && empty($value)) continue; ?>
     <div class="form-group <?php echo ($attributes[$name]['multiple'] ? 'multiple' : '') . ' ' . $name; ?>">
         <label for="<?php echo $name; ?>" class="col-sm-4 control-label"><?php echo ($attributes[$name]['multiple'] ? ($key + 1) . '. ' : '') . ($messages[$name] ?? $name); ?></label>
@@ -547,7 +548,7 @@ if ($pwd_show_policy_pos === 'above') {
 		</script>
 <?php } else { ?>
 <?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly']) { ?>
-                <input type="text" value="<?php echo htmlentities($value) ?>" class="form-control" />
+                <input type="text" value="<?php echo htmlentities($value) ?>" class="form-control" readonly="readonly" />
 <?php } else { ?>
                 <input type="text" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>" value="<?php echo htmlentities($value) ?>" class="form-control" placeholder="<?php echo $messages[$name . 'placeholder']; ?>" />
 <?php } ?>

@@ -46,11 +46,13 @@ $ldap_filter = "(&(objectClass=person)($ldap_login_attribute={login}))";
 $ldap_administration_dn = "cn=Domain Admins,cn=Users,dc=home,dc=intern";
 #define additional attributes to be read from ldap and shown in the form
 # Format:
-#     'NAME_OF_THE_LDAP_ATTRIBUTE' => array(
-#         'icon' => 'key',              name of the fontawsome icon that should be shown in the icon field
-#         'tab' => 'tabname',           the tab name this value is shown in (if value is found in $messages locale array, it is translated)
-#         'admin' => true/false,        if true, only admin can see the attribute (default: false)
-#         'values' => array(            if set, only those values are available for selection
+#     'ATTRIBUTE_NAME' => array(              name of the ldap attribute (ldapdisplayname has to be used here)
+#         'icon' => 'key',                    name of the fontawsome icon that should be shown in the icon field
+#         'tab' => 'tabname',                 the tab name this value is shown in (if value is found in $messages locale array, it is translated)
+#         'admin' => true/false,              if true, only admin can see the attribute (default: false)
+#         'disabled' => true/false,           if true, the input field is disabled for the user
+#         'hidden' => true/false,             if true, the input field is not shown at all (good to hide already existing fields
+#         'values' => array(                  if set, only those values are available for selection
 #             'value1' => 'value1'
 #             'value2' => 'value2'
 #             ...
