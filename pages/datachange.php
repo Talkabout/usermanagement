@@ -350,18 +350,21 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     }
 
                     if (!isset($_SESSION['allusers'])) {
-                        $ldapResult = ldap_search($ldap, "cn=Users," . $ldap_base, "objectclass=user", array('dn', 'cn', 'givenName', 'sn'));
+                        $ldapResult = ldap_search($ldap, "cn=Users," . $ldap_base, "objectclass=user", array('dn', 'cn', 'givenName', 'sn', 'displayName'));
                         $entries    = ldap_get_entries($ldap, $ldapResult);
                         $users      = array();
 
                         foreach ($entries as $key => $value) {
                             if (is_numeric($key)) {
-                                $fullname = $value['sn'][0] . ', ' . $value['givenname'][0];
-                                if (!trim($fullname, ' ,')) {
-                                    $fullname = $value['cn'][0];
-                                }
-                                else {
-                                    $fullname .= ' (' . $value['cn'][0] . ')';
+                                $fullname = ($value['displayname'][0] ?? '');
+                                if (!trim($fullname)) {
+                                  $fullname = $value['sn'][0] . ', ' . $value['givenname'][0];
+                                  if (!trim($fullname, ' ,')) {
+                                      $fullname = $value['cn'][0];
+                                  }
+                                  else {
+                                      $fullname .= ' (' . $value['cn'][0] . ')';
+                                  }
                                 }
                                 $users[$value[dn]] = $fullname;
                             }
