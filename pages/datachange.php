@@ -523,7 +523,7 @@ if ($pwd_show_policy_pos === 'above') {
 <?php foreach ($values as $key => $value) { ?>
 <?php if (is_numeric($key)) { ?>
 <?php
-    $readonly = ($attributes[$name]['systemonly'] || (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly']));
+    $readonly = (($attributes[$name]['systemonly'] || (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly'])) && !in_array($name, array('objectclass', 'memberof')));
 ?>
 <?php if ($readonly && empty($value)) continue; ?>
     <div class="form-group <?php echo ($attributes[$name]['multiple'] ? 'multiple' : '') . ' ' . $name; ?>">
