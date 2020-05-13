@@ -510,6 +510,9 @@ if ($pwd_show_policy_pos === 'above') {
         if (isset($details['admin']) && $details['admin'] && !$administrator) {
             continue;
         }
+        if (isset($attributeMapping[$name]['hidden']) && $attributeMapping[$name]['hidden']) {
+            continue;
+        }
 ?>
 <?php ob_start(); ?>
 <?php $values = ($_POST['data_' . $name] ?? ($data[0][$name] ?? array(''))); ?>
@@ -517,7 +520,6 @@ if ($pwd_show_policy_pos === 'above') {
 <div id="<?php echo $name; ?>">
 <?php foreach ($values as $key => $value) { ?>
 <?php if (is_numeric($key)) { ?>
-<?php if (isset($attributeMapping[$name]['hidden']) && $attributeMapping[$name]['hidden']) continue; ?>
 <?php if (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly'] && empty($value)) continue; ?>
     <div class="form-group <?php echo ($attributes[$name]['multiple'] ? 'multiple' : '') . ' ' . $name; ?>">
         <label for="<?php echo $name; ?>" class="col-sm-4 control-label"><?php echo ($attributes[$name]['multiple'] ? ($key + 1) . '. ' : '') . ($messages[$name] ?? $name); ?></label>
