@@ -267,7 +267,7 @@ else if(isset($_POST["mail"])) { $result = "mailrequired"; }
 else { $result = "emptydatachangeform"; }
 
 #==============================================================================
-# Get mail
+# Get data
 #==============================================================================
 
 # Connect to LDAP
@@ -338,7 +338,7 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
 
                         foreach ($entries as $key => $value) {
                             if (is_numeric($key)) {
-                                $attributeMapping['objectclass']['values'][$value[$nameattribute][0]] = $value[$nameattribute][0];
+                                $attributeMapping['objectclass']['values'][$value[$nameattribute][0]] = $value['cn'][0];
                             }
                         }
 
@@ -383,12 +383,19 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     $attributeMapping['directreports']['values'] = array_merge(array('' => ''), $users);
                 }
 
-                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', array_keys($attributeMapping)) . '))', array('dn', 'cn', 'isSingleValued', $nameattribute, 'systemOnly'));
-                $entries = ldap_get_entries($ldap, $ldapResult);
+                if (!isset($_SESSION['allattributes'])) {
+                    $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', array_keys($attributeMapping)) . '))', array('dn', 'cn', 'isSingleValued', $nameattribute, 'systemOnly'));
+                    $entries = ldap_get_entries($ldap, $ldapResult);
 
-                $attributes = array();
-                foreach ($entries as $index => $entry) {
-                    $attributes[strtolower($entries[$index][$nameattribute][0])] = array('cn' => $entry['cn'][0], 'multiple' => $entry['issinglevalued'][0] == "FALSE", 'systemonly' => $entry['systemonly'][0] == "TRUE");
+                    $attributes = array();
+                    foreach ($entries as $index => $entry) {
+                        $attributes[strtolower($entries[$index][$nameattribute][0])] = array('cn' => $entry['cn'][0], 'multiple' => $entry['issinglevalued'][0] == "FALSE", 'systemonly' => $entry['systemonly'][0] == "TRUE");
+                    }
+
+                    $_SESSION['allattributes'] = $attributes;
+                }
+                else {
+                    $attributes = $_SESSION['allattributes'];
                 }
 
                 $ldapResult = ldap_search($ldap, "cn=Users," . $ldap_base, "cn=$currentlogin", array_keys($attributeMapping));
@@ -404,7 +411,7 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     }
                 }
 
-                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', $data[0]['objectclass']) . '))', array('dn', 'cn', 'maycontain', 'systemmaycontain', $nameattribute));
+                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', $data[0]['objectclass']) . '))', array('dn', 'cn', 'maycontain', 'systemmaycontain'));
                 $entries = ldap_get_entries($ldap, $ldapResult);
 
                 $availableAttributes = array();
@@ -438,7 +445,7 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
 }
 
 #==============================================================================
-# Set mail
+# Set data
 #==============================================================================
 if (isset($_POST) and sizeof($_POST) && !preg_match('/.+invalid$/', $result)) { 
     $result = change_data($ldap, $userdn, $data);
