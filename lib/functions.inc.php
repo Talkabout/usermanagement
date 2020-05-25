@@ -450,9 +450,12 @@ function change_sshkey( $ldap, $dn, $attribute, $sshkey ) {
 
 function create_user( $ldap, $username, $mail ) {
 
+    global $ldap_base;
+
     $result = "";
 
     $dn = 'cn=' . $username . ',cn=Users,' . $ldap_base;
+
     $userdata["samaccountname"][0] = $username;
     $userdata["objectclass"][0] = "top";
     $userdata["objectclass"][1] = "person";
@@ -477,6 +480,8 @@ function create_user( $ldap, $username, $mail ) {
 
 
 function delete_user( $ldap, $username ) {
+
+    global $ldap_base;
 
     $result = "";
 

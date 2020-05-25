@@ -96,3 +96,10 @@ a {
 .result.alert > p {
     display: inline-block;
 }
+
+.input-group-addon:not(:first-child) {
+    border-left: 0;
+    border-left-width: 0px;
+    border-left-style: initial;
+    border-left-color: initial;
+}
