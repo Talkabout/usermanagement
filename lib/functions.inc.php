@@ -520,27 +520,27 @@ function change_data( $ldap, $dn, $data ) {
         $oldData    = ldap_get_entries($ldap, $ldapResult);
 
         foreach ($attributes as $attribute => $ref_attribute) {
-	    if (isset($data[$attribute])) {
-		$value = $data[$attribute];
-		unset($data[$attribute]);
+            if (isset($data[$attribute])) {
+                $value = $data[$attribute];
+                unset($data[$attribute]);
 
-		$oldValue = $oldData[0][$attribute];
-		unset($oldValue['count']);
-		$valueToRemove = array_merge(array_diff($oldValue, $value));
-		$valueToAdd    = array_merge(array_diff($value, $oldValue));
+                $oldValue = ($oldData[0][$attribute] ?? array());
+                unset($oldValue['count']);
+                $valueToRemove = array_merge(array_diff($oldValue, $value));
+                $valueToAdd    = array_merge(array_diff($value, $oldValue));
 
-		if (count($valueToAdd)) {
-		    foreach ($valueToAdd as $group) {
-		        ldap_mod_add($ldap, $group, array($ref_attribute => $dn));
-		    }
-		}
-
-		if (count($valueToRemove)) {
-		    foreach ($valueToRemove as $group) {
-		        ldap_mod_del($ldap, $group, array($ref_attribute => $dn));
-		    }
+                if (count($valueToAdd)) {
+                    foreach ($valueToAdd as $group) {
+                        ldap_mod_add($ldap, $group, array($ref_attribute => $dn));
+                    }
                 }
-	    }
+
+                if (count($valueToRemove)) {
+                    foreach ($valueToRemove as $group) {
+                        ldap_mod_del($ldap, $group, array($ref_attribute => $dn));
+                    }
+                }
+            }
         }
     }
 
