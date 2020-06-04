@@ -91,7 +91,8 @@ $attributeMapping = array(
     ),
     'postalcode' => array(
         'icon' => 'map-marker',
-        'tab' => $messages['tabaddress']
+        'tab' => $messages['tabaddress'],
+        'pattern' => '^[0-9\-]+$'
     ),
     'st' => array(
         'icon' => 'map-marker',
@@ -100,7 +101,8 @@ $attributeMapping = array(
     'c' => array(
         'icon' => 'map-marker',
         'tab' => $messages['tabaddress'],
-        'values' => get_country_codes($lang)
+        'values' => get_country_codes($lang),
+        'pattern' => '^[A-Z]{2}$'
     ),
     'homephone' => array(
         'icon' => 'phone',
@@ -186,22 +188,38 @@ if (isset($_POST) && sizeof($_POST)) {
 
     foreach ($_POST as $key => $value) {
         if (preg_match('/^data_(.+)$/', $key, $matches)) {
-            $data[$matches[1]] = $value;
-        }
-    }
+            $name = $matches[1];
+            $data[$name] = $value;
 
-    if (isset($data['mail'])) {
-        foreach ($data['mail'] as $mail) {
-            if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-                $result = "emailinvalid";
-                $data = null;
-                break;
+            if ($value && isset($attributeMapping[$name]['pattern'])) {
+              $pattern = $attributeMapping[$name]['pattern'];
+              $toCheck = (is_array($value) ? $value : array($value));
+
+              foreach ($toCheck as $valueToCheck) {
+                if (!preg_match('/' . $pattern . '/', $valueToCheck)) {
+                  $result = $name . "invalid";
+                  $data = null;
+                  break 2;
+                }
+              }
             }
         }
     }
-    else {
-        $result = "emailinvalid";
-        $data = null;
+
+    if ($data) {
+      if (isset($data['mail'])) {
+          foreach ($data['mail'] as $mail) {
+              if (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+                  $result = "emailinvalid";
+                  $data = null;
+                  break;
+              }
+          }
+      }
+      else {
+          $result = "emailinvalid";
+          $data = null;
+      }
     }
 
     if (count($_FILES)) {
@@ -241,24 +259,6 @@ if (isset($_POST) && sizeof($_POST)) {
                     $data = null;
                     break;
                 }
-            }
-        }
-    }
-    if (isset($data['postalcode']) && $data['postalcode']) {
-        foreach ($data['postalcode'] as $postalcode) {
-            if ($postalcode && !preg_match('/^[0-9\-]+$/', $postalcode)) {
-                $result = "postalcodeinvalid";
-                $data = null;
-                break;
-            }
-        }
-    }
-    if (isset($data['c'])) {
-        foreach ($data['c'] as $country) {
-            if ($country && !preg_match('/^[A-Z]{2}$/', $country)) {
-                $result = "countryinvalid";
-                $data = null;
-                break;
             }
         }
     }
