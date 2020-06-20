@@ -206,3 +206,4 @@ $messages['department'] = "Abteilung";
 $messages['company'] = "Firma";
 $messages['manager'] = "Vorgesetzter";
 $messages['directreports'] = "Direkter Untergebener";
+$messages['valueinvalid'] = "Der Wert für ein Feld ist ungültig";

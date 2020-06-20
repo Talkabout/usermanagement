@@ -204,3 +204,4 @@ $messages['department'] = "Department";
 $messages['company'] = "Company";
 $messages['manager'] = "Manager";
 $messages['directreports'] = "Direct Reports";
+$messages['valueinvalid'] = "The value for a field is invalid";

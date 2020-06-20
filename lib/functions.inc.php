@@ -507,11 +507,30 @@ function delete_user( $ldap, $username ) {
 # @return result code
 function change_data( $ldap, $dn, $data ) {
 
+    global $ldap_base, $attributeMapping;
+
     $result = "";
 
     $data = array_map(function ($value) {
         return array_filter($value);
     }, $data);
+
+    $checkUnique = array_filter($attributeMapping, function ($mapping) {
+        return (isset($mapping['unique']) && $mapping['unique']);
+    });
+
+    foreach ($checkUnique as $field => $mapping) {
+        if (isset($data[$field])) {
+            foreach ($data[$field] as $value) {
+                $ldapResult = ldap_search($ldap, $ldap_base, $field . '=' . $value, array('cn'));
+                $ldapEntries = ldap_get_entries($ldap, $ldapResult);
+
+                if ($ldapEntries['count'] > 1 || ($ldapEntries['count'] == 1 && (strtolower($dn) != strtolower($ldapEntries[0]['dn'])))) {
+                    return 'valueinvalid[' . $field . ']';
+                }
+            }
+        }
+    }
 
     $attributes = array('memberof' => 'member');
 

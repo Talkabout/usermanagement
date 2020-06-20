@@ -74,12 +74,14 @@ $attributeMapping = array(
     ),
     'mail' => array(
         'icon' => 'envelope',
-        'tab' => $messages['tabgeneral']
+        'tab' => $messages['tabgeneral'],
+        'unique' => true
     ),
     'othermailbox' => array(
         'icon' => 'envelope',
         'tab' => $messages['tabgeneral'],
-        'dependency' => 'mail'
+        'dependency' => 'mail',
+        'unique' => true
     ),
     'streetaddress' => array(
         'icon' => 'map-marker',
@@ -196,7 +198,7 @@ if (isset($_POST) && sizeof($_POST)) {
               $toCheck = (is_array($value) ? $value : array($value));
 
               foreach ($toCheck as $valueToCheck) {
-                if (!preg_match('/' . $pattern . '/', $valueToCheck)) {
+                if ($valueToCheck && !preg_match('/' . $pattern . '/', $valueToCheck)) {
                   $result = $name . "invalid";
                   $data = null;
                   break 2;
@@ -411,7 +413,7 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                     }
                 }
 
-                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', $data[0]['objectclass']) . '))', array('dn', 'cn', 'maycontain', 'systemmaycontain'));
+                $ldapResult = ldap_search($ldap, "cn=Schema,cn=Configuration," . $ldap_base, '(|(' . $nameattribute . '=' . implode(')(' . $nameattribute . '=', ($data[0]['objectclass'] ?? $data['objectclass'])) . '))', array('dn', 'cn', 'maycontain', 'systemmaycontain'));
                 $entries = ldap_get_entries($ldap, $ldapResult);
 
                 $availableAttributes = array();
