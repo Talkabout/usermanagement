@@ -111,11 +111,11 @@ if ($action == 'logout') {
 
 # Available actions
 $available_actions = array('delete', 'create', 'datachange', 'devicechange');
-if ( $use_change ) { array_push( $available_actions, "change"); }
-if ( $change_sshkey ) { array_push( $available_actions, "changesshkey"); }
-if ( $use_questions ) { array_push( $available_actions, "resetbyquestions", "setquestions"); }
-if ( $use_tokens ) { array_push( $available_actions, "resetbytoken", "sendtoken"); }
-if ( $use_sms ) { array_push( $available_actions, "resetbytoken", "sendsms"); }
+if ( $use_change ?? false ) { array_push( $available_actions, "change"); }
+if ( $change_sshkey ?? false ) { array_push( $available_actions, "changesshkey"); }
+if ( $use_questions ?? false ) { array_push( $available_actions, "resetbyquestions", "setquestions"); }
+if ( $use_tokens ?? false ) { array_push( $available_actions, "resetbytoken", "sendtoken"); }
+if ( $use_sms ?? false ) { array_push( $available_actions, "resetbytoken", "sendsms"); }
 
 # Ensure requested action is available, or fall back to default
 if ( ! in_array($action, $available_actions) ) { $action = $default_action; }
@@ -218,7 +218,7 @@ $mailer->LE            = $mail_newline;
 <div class="title alert alert-success text-center"><h1><?php echo $messages["title"]; ?></h1></div>
 <?php } ?>
 
-<?php if ( $logo ) { ?>
+<?php if ( $logo ?? false ) { ?>
 <a href="index.php" alt="Home">
 <img src="<?php echo $logo; ?>" alt="Logo" class="logo img-responsive center-block" />
 </a>
@@ -234,7 +234,7 @@ $mailer->LE            = $mail_newline;
             <?php
         }
     } else {
-	if (!$_SESSION['authenticated'] && $action !== 'sendtoken' && $action !== 'resetbytoken') {
+	if (!($_SESSION['authenticated'] ?? false) && $action !== 'sendtoken' && $action !== 'resetbytoken') {
             include("pages/login.php");
 	}
 	else {
@@ -266,6 +266,16 @@ $mailer->LE            = $mail_newline;
         $('form').find('input:placeholder-shown').eq(0).focus();
 
         $('.nav-tabs').tabCollapse();
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+
+        var activeTab = localStorage.getItem('activeTab');
+
+        if (activeTab) {
+            $('#tabs a[href="' + activeTab + '"]').tab('show');
+        }
     });
 </script>
 </body>

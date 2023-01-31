@@ -55,7 +55,6 @@ a {
     height: 45px;
     background-size: contain;
     background-repeat: no-repeat;
-    background-image: url(../pages/avatar.php);
     position: absolute;
     top: 50%;
     transform: translate(-100%, -50%);

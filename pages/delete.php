@@ -88,7 +88,7 @@ $users      = array();
 
 foreach ($entries as $key => $value) {
     if (is_numeric($key)) {
-        $users[$value[dn]] = $value['cn'][0];
+        $users[$value['dn']] = $value['cn'][0];
     }
 }
 
@@ -106,14 +106,14 @@ if (!empty($username)) {
 #==============================================================================
 # HTML
 #==============================================================================
-if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
+if ( isset($obscure_failure_messages) && in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
 ?>
 
 <div class="result alert alert-<?php echo get_criticity($result) ?>">
 <p><i class="fa fa-fw <?php echo get_fa_class($result) ?>" aria-hidden="true"></i> <?php echo $messages[$result]; ?></p>
 </div>
 
-<?php if ( $display_posthook_error and $posthook_return > 0 ) { ?>
+<?php if ( isset($display_posthook_error) && $display_posthook_error && $posthook_return > 0 ) { ?>
 
 <div class="result alert alert-warning">
 <p><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> <?php echo $posthook_output[0]; ?></p>
@@ -133,7 +133,7 @@ if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"
 		<select class="form-control" name="username" id="username">
 		    <option value=""></option>
 <?php foreach ($users as $dn => $name) { ?>
-		    <option value="<?php echo $name; ?>" <?php if ($_POST['username'] == $name) echo 'selected="selected"'; ?>><?php echo $name; ?></option>
+		    <option value="<?php echo $name; ?>" <?php if (($_POST['username'] ?? '') == $name) echo 'selected="selected"'; ?>><?php echo $name; ?></option>
 <?php } ?>
 		</select>
             </div>

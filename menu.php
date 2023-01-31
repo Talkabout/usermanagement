@@ -8,14 +8,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-		<?php if ($_SESSION['authenticated']) { ?>
+		<?php if ($_SESSION['authenticated'] ?? false) { ?>
               <a class="navbar-brand <?php if ( $action === "datachange" ) { echo "active"; } ?>" href="?action=datachange"
                   ><i class="fa fa-fw fa-home"></i> <?php echo $messages["datachange"]; ?></a>
 		<?php } ?>
             </div>
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-		<?php if ($_SESSION['authenticated']) { ?>
+		<?php if ($_SESSION['authenticated'] ?? false) { ?>
 		<li class="<?php if ( $action === "change" ) { echo "active"; } ?>">
                   <a href="?action=change">
                     <i class="fa fa-fw fa-lock"></i> <?php echo $messages["passwordchange"]; ?>
@@ -70,14 +70,15 @@
                 <?php } ?>
               </ul>
               <ul style="float: right;" class="nav navbar-nav">
-<?php if ($_SESSION['authenticated']) { ?>
+<?php if ($_SESSION['authenticated'] ?? false) { ?>
 		<li>
                   <a href="?login=<?php echo $_SESSION['login']; ?>">
 <?php if ($_SESSION['thumbnailphoto']) { ?>
                     <div
                        class="profile-image"
+                       style="background-image:url('data:image/png;base64,<?php echo base64_encode($_SESSION['thumbnailphoto'][0]); ?>');"
                        data-toggle="popover"
-                       data-content="<div class='profile-image large'></div>"
+                       data-content="<div class='profile-image large' style=&quot;background-image:url('data:image/png;base64,<?php echo base64_encode($_SESSION['thumbnailphoto'][0]); ?>');&quot;></div>"
                        data-html="true"
                     >
                     </div>

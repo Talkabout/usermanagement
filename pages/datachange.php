@@ -450,6 +450,12 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
 # Set data
 #==============================================================================
 if (isset($_POST) and sizeof($_POST) && !preg_match('/.+invalid$/', $result)) { 
+    foreach ($data as $name => $value) {
+      if (is_array($value) && !$attributes[$name]['multiple']) {
+        $data[$name] = array(implode(',', $value));
+      }
+    }
+
     $result = change_data($ldap, $userdn, $data);
     preg_match('/([^\[]+)(\[([^\]]+)\])?/', $result, $matches);
     $result = $matches[1];
@@ -460,7 +466,7 @@ if (isset($_POST) and sizeof($_POST) && !preg_match('/.+invalid$/', $result)) {
 #==============================================================================
 # HTML
 #==============================================================================
-if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
+if ( isset($obscure_failure_messages) && is_array($obscure_failure_messages) && in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
 ?>
 
 <div style="position: relative;" class="result alert alert-<?php echo get_criticity($result) ?>">
@@ -479,7 +485,7 @@ if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"
 <?php } ?>
 </div>
 
-<?php if ( $display_posthook_error and $posthook_return > 0 ) { ?>
+<?php if ( isset($display_posthook_error) && $display_posthook_error && $posthook_return > 0 ) { ?>
 
 <div class="result alert alert-warning">
     <p><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> <?php echo $posthook_output[0]; ?></p>
@@ -528,17 +534,22 @@ if ($pwd_show_policy_pos === 'above') {
         }
 ?>
 <?php ob_start(); ?>
-<?php $values = ($_POST['data_' . $name] ?? ($data[0][$name] ?? array(''))); ?>
+<?php
+  $readonly = (($attributes[$name]['systemonly'] || (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly'])) && !in_array($name, array('objectclass', 'memberof')));
+  $multiple = ($attributes[$name]['multiple'] || $attributeMapping[$name]['multiple']);
+  $values = ($_POST['data_' . $name] ?? ($data[0][$name] ?? array('')));
+
+  if (!$attributes[$name]['multiple'] && $attributeMapping[$name]['multiple']) {
+    $values = (!isset($values['count']) ? $values : explode(',', $values[0]));
+  }
+?>
 <div id="container_<?php echo $name; ?>" class="group-container <?php echo (!count(array_filter($values)) && isset($attributeMapping[$name]['dependency']) ? 'hidden' : ''); ?>">
 <div id="<?php echo $name; ?>">
 <?php foreach ($values as $key => $value) { ?>
 <?php if (is_numeric($key)) { ?>
-<?php
-    $readonly = (($attributes[$name]['systemonly'] || (isset($attributeMapping[$name]['readonly']) && $attributeMapping[$name]['readonly'])) && !in_array($name, array('objectclass', 'memberof')));
-?>
 <?php if ($readonly && empty($value)) continue; ?>
-    <div class="form-group <?php echo ($attributes[$name]['multiple'] ? 'multiple' : '') . ' ' . $name; ?>">
-        <label for="<?php echo $name; ?>" class="col-sm-4 control-label"><?php echo ($attributes[$name]['multiple'] ? ($key + 1) . '. ' : '') . ($messages[$name] ?? $name); ?></label>
+    <div class="form-group <?php echo ($multiple ? 'multiple' : '') . ' ' . $name; ?>">
+        <label for="<?php echo $name; ?>" class="col-sm-4 control-label"><?php echo ($multiple ? ($key + 1) . '. ' : '') . ($messages[$name] ?? $name); ?></label>
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-<?php echo $attributeMapping[$name]['icon']; ?>"></i></span>
@@ -568,14 +579,31 @@ if ($pwd_show_policy_pos === 'above') {
 <?php if ($readonly) { ?>
                 <input type="text" value="<?php echo htmlentities($value) ?>" class="form-control" readonly="readonly" />
 <?php } else { ?>
-                <input type="text" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>" value="<?php echo htmlentities($value) ?>" class="form-control" placeholder="<?php echo $messages[$name . 'placeholder']; ?>" />
+                <input type="text" name="data_<?php echo $name; ?>[]" id="<?php echo $name; ?>" value="<?php echo htmlentities($value) ?>" class="form-control" placeholder="<?php echo ($messages[$name . 'placeholder'] ?? ''); ?>" />
 <?php } ?>
 <?php } ?>
-<?php if ($attributes[$name]['multiple'] && !$readonly) { ?>
+<?php if ($multiple && !$readonly) { ?>
                 <span class="input-group-addon btn btn-default delete" style="cursor: pointer;" onclick="delete_parent_form_group(this);"><i style="color: red;" class="fa fa-fw fa-times"></i></span>
                 <span class="input-group-addon btn btn-default add" style="cursor: pointer;" onclick="clone_parent_form_group(this);"><i class="fa fa-fw fa-plus"></i></span>
 <?php } ?>
-<?php if (($dependencyKey = reset(array_keys(array_filter($attributeMapping, function ($mapping) use ($name) { return $mapping['dependency'] == $name; })))) && !$data[0][$dependencyKey]['count']) { ?>
+<?php
+  $dependencyKeys = array_keys(
+    array_filter(
+      $attributeMapping,
+      function ($mapping) use ($name) {
+        return (isset($mapping['dependency']) && $mapping['dependency'] == $name);
+      }
+    )
+  );
+  $dependencyKey = reset($dependencyKeys);
+  if (
+       $dependencyKey
+    && (
+         !isset($data[0][$dependencyKey]['count'])
+      || !$data[0][$dependencyKey]['count']
+    )
+  ) {
+?>
                 <label class="btn btn-default input-group-addon" onclick="$('#container_<?php echo $dependencyKey; ?>').removeClass('hidden');$(this).hide();">
                     <?php echo $messages['additional']; ?>
                 </label>
@@ -587,18 +615,24 @@ if ($pwd_show_policy_pos === 'above') {
 <?php } ?>
 </div>
 </div>
-<?php $tabs[$messages[$attributeMapping[$name]['tab']] ?? $attributeMapping[$name]['tab']] .= ob_get_clean(); ?>
+<?php 
+  $key = ($messages[$attributeMapping[$name]['tab']] ?? $attributeMapping[$name]['tab']);
+  if (!isset($tabs[$key])) {
+    $tabs[$key] = '';
+  }
+  $tabs[$key] .= ob_get_clean();
+?>
 <?php } ?>
 <ul class="nav nav-tabs" id="tabs" role="tablist">
 <?php foreach (array_keys($tabs) as $name) { ?>
-  <li class="nav-item <?php echo (reset(array_keys($tabs)) == $name ? 'active' : ''); ?>">
-    <a class="nav-link <?php echo (reset(array_keys($tabs)) == $name ? 'active' : ''); ?>" data-toggle="tab" href="#<?php echo md5($name); ?>" role="tab" aria-controls="<?php echo md5($name); ?>" aria-selected="<?php echo (reset(array_keys($tabs)) == $name ? 'true' : 'false'); ?>"><?php echo $name; ?></a>
+  <li class="nav-item <?php $keys = array_keys($tabs); $tab = reset($keys); echo ($tab == $name ? 'active' : ''); ?>">
+    <a class="nav-link <?php echo ($tab == $name ? 'active' : ''); ?>" data-toggle="tab" href="#<?php echo md5($name); ?>" role="tab" aria-controls="<?php echo md5($name); ?>" aria-selected="<?php echo ($tab == $name ? 'true' : 'false'); ?>"><?php echo $name; ?></a>
   </li>
 <?php } ?>
 </ul>
 <div class="tab-content" id="tabContent">
 <?php foreach ($tabs as $name => $content) { ?>
-  <div class="tab-pane fade <?php echo (reset(array_keys($tabs)) == $name ? 'in active' : ''); ?>" id="<?php echo md5($name); ?>" role="tabpanel" aria-labelledby="<?php echo md5($name); ?>-tab"><?php echo $tabs[$name]; ?></div>
+  <div class="tab-pane fade <?php $keys = array_keys($tabs); $tab = reset($keys); echo (($tab == $name) ? 'in active' : ''); ?>" id="<?php echo md5($name); ?>" role="tabpanel" aria-labelledby="<?php echo md5($name); ?>-tab"><?php echo $content; ?></div>
 <?php } ?>
 </div>
     <div class="form-group">

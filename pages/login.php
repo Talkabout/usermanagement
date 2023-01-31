@@ -162,7 +162,7 @@ if ( $result === "" ) {
 #==============================================================================
 # HTML
 #==============================================================================
-if ( in_array($result, $obscure_failure_messages) ) {
+if ( isset($obscure_failure_messages) && in_array($result, $obscure_failure_messages) ) {
     $result = "badcredentials";
 }
 ?>
@@ -175,7 +175,7 @@ if ( in_array($result, $obscure_failure_messages) ) {
 
 <?php } ?>
 
-<?php if ( $display_posthook_error and $posthook_return > 0 ) { ?>
+<?php if ( isset($display_posthook_error) && $display_posthook_error && $posthook_return > 0 ) { ?>
 
 <div class="result alert alert-warning">
 <p><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> <?php echo $posthook_output[0]; ?></p>

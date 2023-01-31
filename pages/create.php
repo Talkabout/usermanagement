@@ -198,14 +198,14 @@ if ( $result === "" ) {
 #==============================================================================
 # HTML
 #==============================================================================
-if ( in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
+if ( isset($obscure_failure_messages) && in_array($result, $obscure_failure_messages) ) { $result = "badcredentials"; }
 ?>
 
 <div class="result alert alert-<?php echo get_criticity($result) ?>">
 <p><i class="fa fa-fw <?php echo get_fa_class($result) ?>" aria-hidden="true"></i> <?php echo $messages[$result]; ?></p>
 </div>
 
-<?php if ( $display_posthook_error and $posthook_return > 0 ) { ?>
+<?php if ( isset($display_posthook_error) && $display_posthook_error && $posthook_return > 0 ) { ?>
 
 <div class="result alert alert-warning">
 <p><i class="fa fa-fw fa-exclamation-triangle" aria-hidden="true"></i> <?php echo $posthook_output[0]; ?></p>
@@ -228,7 +228,7 @@ if ($pwd_show_policy_pos === 'above') {
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-user"></i></span>
-                <input type="text" name="username" id="username" value="<?php echo $_POST['username']; ?>" class="form-control" placeholder="<?php echo $messages["username"]; ?>" />
+                <input type="text" name="username" id="username" value="<?php echo ($_POST['username'] ?? ''); ?>" class="form-control" placeholder="<?php echo $messages["username"]; ?>" />
             </div>
         </div>
     </div>
@@ -237,7 +237,7 @@ if ($pwd_show_policy_pos === 'above') {
         <div class="col-sm-8">
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-fw fa-envelope"></i></span>
-                <input type="email" name="mail" id="mail" value="<?php echo $_POST['mail']; ?>" class="form-control" placeholder="<?php echo $messages["mail"]; ?>" />
+                <input type="email" name="mail" id="mail" value="<?php echo ($_POST['mail'] ?? ''); ?>" class="form-control" placeholder="<?php echo $messages["mail"]; ?>" />
             </div>
         </div>
     </div>
