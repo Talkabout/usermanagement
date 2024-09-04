@@ -1012,7 +1012,7 @@ function get_country_codes($lang) {
     );
 
     array_walk($countries, function (&$value, $key) use ($lang) {
-        $value = locale_get_display_name('-' . $key, $lang);
+        $value = locale_get_display_region('-' . $key, $lang);
     });
 
     asort($countries, SORT_NATURAL);

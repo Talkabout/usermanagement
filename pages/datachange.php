@@ -322,7 +322,7 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
 
                         foreach ($entries as $key => $value) {
                             if (is_numeric($key)) {
-                               $attributeMapping['memberof']['values'][$value[dn]] = $value['cn'][0];
+                               $attributeMapping['memberof']['values'][$value['dn']] = $value['cn'][0];
                             }
                         }
 
@@ -369,7 +369,7 @@ if ( $ldap_starttls && !ldap_start_tls($ldap) ) {
                                       $fullname .= ' (' . $value['cn'][0] . ')';
                                   }
                                 }
-                                $users[$value[dn]] = $fullname;
+                                $users[$value['dn']] = $fullname;
                             }
                         }
 
